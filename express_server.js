@@ -4,8 +4,12 @@ const PORT = 8080;
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
-///
-///
+// Cookies
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+// app.get('/', (req, res) => {
+//   console.log(res.cookie);
+// })
 // Database
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -13,8 +17,8 @@ const urlDatabase = {
 };
 
 // Generate short URL
-function generateRandomString() {
-  var alphaNum = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const generateRandomString = function() {
+  const alphaNum = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
   for (let i = 0; i < alphaNum.length; i++) {
     if (result.length < 6) {
@@ -23,6 +27,13 @@ function generateRandomString() {
   }
   return result;
 };
+
+//Login
+app.post("/login", (req, res) => {
+  let username = req.body.username;
+  res.cookie('username', username);
+  res.redirect('/urls');
+});
 
 //Create URL
 app.post("/urls", (req, res) => {
@@ -36,7 +47,8 @@ app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
-// 
+//
+
 
 // Create New URL page render
 app.get("/urls/new", (req, res) => {
@@ -62,20 +74,19 @@ app.get("/urls/:shortURL", (req, res) => {
 //Update/edit URL
 app.post("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let longURL; 
+  let longURL;
   if (!req.body.longURL) {
     longURL = urlDatabase[shortURL];
     const templateVars = { shortURL: shortURL, longURL: longURL };
     res.render("urls_show", templateVars);
   } else {
-    longURL = req.body.longURL
+    longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
     res.redirect(`/urls`);
   }
-})
+});
 
-
-// Redirect short URL to long URL site 
+// Redirect short URL to long URL site
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
