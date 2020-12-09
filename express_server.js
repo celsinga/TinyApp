@@ -51,9 +51,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 //
 
-
-
-
+//Access URL Database
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
@@ -61,6 +59,7 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+//Update/edit URL
 app.post("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL; 
@@ -83,7 +82,7 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-// KEEP 
+// Connection
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -92,14 +91,3 @@ app.get("/urls.json", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
-
-// don't think I need
-
-// app.post("/urls/:id", (req, res) => {
-//   let newLongURL = req.body.longURL
-//   console.log(newLongURL)
-//   urlDatabase[id] = newLongURL;
-//   res.render("urls_index");
-// })
