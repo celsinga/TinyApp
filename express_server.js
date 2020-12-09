@@ -7,15 +7,11 @@ app.set("view engine", "ejs");
 // Cookies
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
-// app.get('/', (req, res) => {
-//   console.log(res.cookie);
-// })
 // Database
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
-
 // Generate short URL
 const generateRandomString = function() {
   const alphaNum = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -27,57 +23,55 @@ const generateRandomString = function() {
   }
   return result;
 };
-
 //Login
 app.post("/login", (req, res) => {
   let username = req.body.username;
   res.cookie('username', username);
   res.redirect('/urls');
 });
-
+app.post("/logout", (req, res) => {
+  res.clearCookie('username');
+  res.redirect('/urls');
+});
 //Create URL
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`);
 });
-//
 //Main Page
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  let username = req.cookies["username"];
+  const templateVars = { urls: urlDatabase, username: username };
   res.render("urls_index", templateVars);
 });
-//
-
-
 // Create New URL page render
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let username = req.cookies["username"];
+  const templateVars = { username: username };
+  res.render("urls_new", templateVars);
 });
-//
-
 // Delete URL
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect(`/urls`);
 });
-//
-
 //Access URL Database
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
-  const templateVars = { shortURL: shortURL, longURL: longURL };
+  let username = req.cookies["username"];
+  const templateVars = { shortURL: shortURL, longURL: longURL, username: username };
   res.render("urls_show", templateVars);
 });
-
 //Update/edit URL
 app.post("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL;
   if (!req.body.longURL) {
     longURL = urlDatabase[shortURL];
-    const templateVars = { shortURL: shortURL, longURL: longURL };
+    let username = req.cookies["username"];
+    const templateVars = { shortURL: shortURL, longURL: longURL, username: username };
     res.render("urls_show", templateVars);
   } else {
     longURL = req.body.longURL;
@@ -85,20 +79,16 @@ app.post("/urls/:shortURL", (req, res) => {
     res.redirect(`/urls`);
   }
 });
-
 // Redirect short URL to long URL site
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
   res.redirect(longURL);
 });
-
 // Connection
-
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
-
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
