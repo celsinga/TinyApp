@@ -23,11 +23,6 @@ const emailFetcher = function() {
     return userDatabase[users].email;
   }
 }
-const passwordFetcher = function() {
-  for (let users in userDatabase) {
-    return userDatabase[users].password;
-  }
-}
 // Generate short URL
 const generateRandomString = function() {
   const alphaNum = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
