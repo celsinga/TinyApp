@@ -9,8 +9,7 @@ const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 // Databases
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+
 };
 const userDatabase = { 
   "userRandomID": {
@@ -22,6 +21,11 @@ const userDatabase = {
 const emailFetcher = function() {
   for (let users in userDatabase) {
     return userDatabase[users].email;
+  }
+}
+const passwordFetcher = function() {
+  for (let users in userDatabase) {
+    return userDatabase[users].password;
   }
 }
 // Generate short URL
@@ -37,7 +41,9 @@ const generateRandomString = function() {
 };
 // Registration page
 app.get("/register", (req, res) => {
-  res.render("register");
+  const user_id = req.cookies["user_id"];
+  const templateVars = { user_id: user_id };
+  res.render("register", templateVars);
 });
 app.post("/register", (req, res) => {
   let id = generateRandomString();
@@ -45,13 +51,39 @@ app.post("/register", (req, res) => {
   let password = req.body.password;
   let userInfo = {id, email, password};
   if (!email || !password) {
-    return res.end( 'Email or password is empty');
+    return res.status(400).send( 'Email or password is empty');
   } else if (email === emailFetcher()) {
-    return res.end('The email you entered is already in use')
+    return res.status(400).send('The email you entered is already in use');
   } else {
     userDatabase[id] = userInfo;
     res.cookie('user_id', id);
     return res.redirect('/urls');
+  }
+})
+app.post("/reg", (req, res) => {
+  res.redirect('/register');
+});
+app.post("/log", (req, res) => {
+  res.redirect('/login');
+});
+app.get("/login", (req, res) => {
+  const user_id = req.cookies["user_id"];
+  const templateVars = { user_id: user_id };
+  res.render("login", templateVars);
+});
+app.post("/login", (req, res) => {
+  let email = req.body.email;
+  let password = req.body.password;
+  let foundUser;
+  for (const userId in userDatabase) {
+    const user = userDatabase[userId];
+    if (user.email === email && user.password === password) {
+      foundUser = user;
+      res.cookie('user_id', userDatabase[userId].id);
+      res.redirect(`/urls`);
+    } else if (user.email !== email || user.password !== password) {
+      res.status(403).send('Incorrect email or password')
+    }
   }
 })
 //Navbar Logged Out
@@ -118,12 +150,3 @@ app.get("/urls.json", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
-
-//Navbar Logged In
-// app.post("/login", (req, res) => {
-//   // let username = req.body.username;
-//   // res.cookie('username', username);
-//   res.redirect('/urls');
-// });

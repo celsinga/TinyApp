@@ -9,7 +9,12 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
-        <form method="POST" action="/logout" class="nav"><p>Logged In As: <%= users[user_id].email %>!</p><button type="submit" class="btn btn-success">Logout</button></form>  
+        <% if(user_id) { %>
+        <form method="POST" action="/logout" class="nav"><p>Logged In As: <%= users[user_id].email %>!</p><button type="submit" class="btn btn-success">Logout</button></form>
+        <% } else {%>
+        <form method="POST" action="/log" class="nav ml-auto"><button type="submit" class="btn btn-success">Login</button></form>
+        <form method="POST" action="/reg" class="nav"><button type="submit" class="btn btn-success">Register</button></form>
+        <% } %>
     </div>
   </nav>
 </header>
