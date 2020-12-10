@@ -12,11 +12,7 @@ const urlDatabase = {
 
 };
 const userDatabase = { 
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  }
+
 };
 const emailFetcher = function() {
   for (let users in userDatabase) {
@@ -89,7 +85,13 @@ app.post("/logout", (req, res) => {
 //Create URL
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  let long = req.body.longURL;
+  let user_id = req.cookies["user_id"];
+  let obj = {};
+  obj["longURL"] = long;
+  obj["userID"] = user_id;
+  urlDatabase[shortURL] = obj;
+  console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 //Main Page
@@ -101,8 +103,13 @@ app.get("/urls", (req, res) => {
 // Create New URL page render
 app.get("/urls/new", (req, res) => {
   const user_id = req.cookies["user_id"];
-  const templateVars = { users: userDatabase, user_id: user_id };
+  if (user_id) {
+    const templateVars = { users: userDatabase, user_id: user_id };
   res.render("urls_new", templateVars);
+  } else {
+    res.redirect('/login');
+  }
+  
 });
 // Delete URL
 app.post("/urls/:shortURL/delete", (req, res) => {
@@ -112,7 +119,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 //Access URL Database
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[shortURL];
+  let longURL = urlDatabase[shortURL].longURL;
   const user_id = req.cookies["user_id"];
   const templateVars = { shortURL: shortURL, longURL: longURL, users: userDatabase, user_id: user_id };
   res.render("urls_show", templateVars);
