@@ -111,7 +111,6 @@ app.post("/urls", (req, res) => {
   obj["longURL"] = long;
   obj["userID"] = user_id;
   urlDatabase[shortURL] = obj;
-  console.log(obj);
   res.redirect(`/urls/${shortURL}`);
 });
 //Main Page
