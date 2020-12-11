@@ -138,11 +138,15 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 //Access URL Database
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[shortURL].longURL;
   const user_id = req.session.user_id;
   const myURLs = urlsForUser(user_id);
-  const templateVars = { shortURL: shortURL, longURL: longURL, users: userDatabase, user_id: user_id, myURLs };
-  res.render("urls_show", templateVars);
+  if (user_id) {
+    let longURL = urlDatabase[shortURL].longURL;
+    const templateVars = { shortURL: shortURL, longURL: longURL, users: userDatabase, user_id: user_id, myURLs };
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(403).send('This URL can only be viewed by its user. Please log in.');
+  }
 });
 //Update/edit URL
 app.post("/urls/:shortURL", (req, res) => {
