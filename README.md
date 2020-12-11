@@ -6,8 +6,9 @@ Passwords are hashed and cookies are encrypted.
 
 ## Final Product
 
-!["screenshot description"](#)
-!["screenshot description"](#)
+!["User URLs"](https://github.com/celsinga/TinyApp/blob/master/docs/my-urls.png?raw=true)
+!["Edit/visit short URL"](https://github.com/celsinga/TinyApp/blob/master/docs/edit-urls.png?raw=true)
+!["Register Page"](https://github.com/celsinga/TinyApp/blob/master/docs/register-page.png?raw=true)
 
 ## Dependencies
 
@@ -22,5 +23,3 @@ Passwords are hashed and cookies are encrypted.
 
 - Install all dependencies (using the `npm install` command).
 - Run the development web server using the `node express_server.js` command.
-- When running the app, be sure to end a session by clicking "Logout". Otherwise cookies will not be cleared, and app could
-  crash if you stop and run the app again while being logged in.
