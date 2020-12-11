@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080;
 const bodyParser = require("body-parser");
+const bcrypt = require('bcrypt');
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 // Cookies
@@ -14,6 +15,7 @@ const urlDatabase = {
 const userDatabase = { 
 
 };
+//Return emails
 const emailFetcher = function() {
   for (let users in userDatabase) {
     return userDatabase[users].email;
@@ -49,7 +51,8 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   let id = generateRandomString();
   let email = req.body.email;
-  let password = req.body.password;
+  let pw = req.body.password;
+  const password = bcrypt.hashSync(pw, 10)
   let userInfo = {id, email, password};
   if (!email || !password) {
     return res.status(400).send( 'Email or password is empty');
@@ -58,16 +61,19 @@ app.post("/register", (req, res) => {
   } else {
     userDatabase[id] = userInfo;
     res.cookie('user_id', id);
+    console.log(userDatabase);
     return res.redirect('/urls');
   }
 })
+//Register button
 app.post("/reg", (req, res) => {
   res.redirect('/register');
 });
+//Login button
 app.post("/log", (req, res) => {
   res.redirect('/login');
 });
-
+//Login page
 app.get("/login", (req, res) => {
   const user_id = req.cookies["user_id"];
   const users = userDatabase;
@@ -75,19 +81,21 @@ app.get("/login", (req, res) => {
   console.log(users);
   res.render("login", templateVars);
 });
-
+//Login form
 app.post("/login", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
-  let foundUser;
   for (const userId in userDatabase) {
     const user = userDatabase[userId];
-    if (user.email === email && user.password === password) {
-      foundUser = user;
-      res.cookie('user_id', userDatabase[userId].id);
-      res.redirect(`/urls`);
+    if (user.email === email) {
+      if (bcrypt.compareSync(password, user.password)) {
+        res.cookie('user_id', userDatabase[userId].id);
+        res.redirect(`/urls`);
+      } else {
+        res.status(403).send('Incorrect password');
+      }
     } else {
-      res.status(403).send('Incorrect email or password');
+      res.status(403).send('Could not find a user with that email');
     }
   }
 })
