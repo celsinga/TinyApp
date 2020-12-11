@@ -6,8 +6,9 @@ Passwords are hashed and cookies are encrypted.
 
 ## Final Product
 
-!["screenshot description"](#)
-!["screenshot description"](#)
+!["User URLs"](https://github.com/celsinga/TinyApp/blob/master/docs/my-urls.png?raw=true)
+!["Edit/visit short URL"](https://github.com/celsinga/TinyApp/blob/master/docs/edit-urls.png?raw=true)
+!["Register Page"](https://github.com/celsinga/TinyApp/blob/master/docs/register-page.png?raw=true)
 
 ## Dependencies
 
