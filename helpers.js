@@ -8,5 +8,16 @@ const getUserByEmail = function(email, database) {
   return user;
 };
 
+const generateRandomString = function() {
+  const alphaNum = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < alphaNum.length; i++) {
+    if (result.length < 6) {
+      result += alphaNum.charAt(Math.floor(Math.random() * alphaNum.length));
+    }
+  }
+  return result;
+};
 
 module.exports = getUserByEmail;
+module.exports = generateRandomString;

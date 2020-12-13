@@ -11,7 +11,9 @@ app.use(cookieSession({
   name: 'session',
   keys: ['key1', 'key2']
 }));
+//Exported Functions in helpers.js
 const getUserByEmail = require('./helpers.js');
+const generateRandomString = require('./helpers.js');
 // Databases
 const urlDatabase = {
 
@@ -28,17 +30,6 @@ const urlsForUser = function(id) {
     }
   }
   return myUrls;
-};
-// Generates short URL/user_id
-const generateRandomString = function() {
-  const alphaNum = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  for (let i = 0; i < alphaNum.length; i++) {
-    if (result.length < 6) {
-      result += alphaNum.charAt(Math.floor(Math.random() * alphaNum.length));
-    }
-  }
-  return result;
 };
 // Registration page
 app.get("/register", (req, res) => {
@@ -115,7 +106,7 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let long = req.body.longURL;
   let user_id = req.session.user_id;
-  let obj = {};
+  const obj = {};
   obj["longURL"] = long;
   obj["userID"] = user_id;
   urlDatabase[shortURL] = obj;
