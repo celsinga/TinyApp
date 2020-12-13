@@ -43,8 +43,12 @@ const generateRandomString = function() {
 // Registration page
 app.get("/register", (req, res) => {
   const user_id = req.session.user_id;
-  const templateVars = { user_id: user_id };
-  res.render("register", templateVars);
+  if (user_id) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = { user_id: user_id };
+    res.render("register", templateVars);
+  }
 });
 // Registration form
 app.post("/register", (req, res) => {
@@ -75,9 +79,13 @@ app.post("/log", (req, res) => {
 //Login page
 app.get("/login", (req, res) => {
   const user_id = req.session.user_id;
-  const users = userDatabase;
-  const templateVars = { users, user_id };
-  res.render("login", templateVars);
+  if (user_id) {
+    res.redirect("/urls");
+  } else {
+    const users = userDatabase;
+    const templateVars = { users, user_id };
+    res.render("login", templateVars);
+  }
 });
 //Login form
 app.post("/login", (req, res) => {
