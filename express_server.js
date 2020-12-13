@@ -83,11 +83,11 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
+  console.log(userDatabase);
   for (const userId in userDatabase) {
-    const user = userDatabase[userId];
-    if (user.email === email) {
-      if (bcrypt.compareSync(password, user.password)) {
-        req.session.user_id = user.id;
+    if (userDatabase[userId].email === email) {
+      if (bcrypt.compareSync(password, userDatabase[userId].password)) {
+        req.session.user_id = userDatabase[userId].id;
         res.redirect(`/urls`);
       } else {
         res.status(403).send('Incorrect password');
@@ -137,15 +137,14 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 //Access URL Database
 app.get("/urls/:shortURL", (req, res) => {
-  let shortURL = req.params.shortURL;
+  const shortURL = req.params.shortURL;
   const user_id = req.session.user_id;
-  const myURLs = urlsForUser(user_id);
-  if (user_id) {
-    let longURL = urlDatabase[shortURL].longURL;
-    const templateVars = { shortURL: shortURL, longURL: longURL, users: userDatabase, user_id: user_id, myURLs };
+  const longURL = urlDatabase[shortURL].longURL;
+  if(urlDatabase[shortURL].userID === user_id){
+    const templateVars = { shortURL: shortURL, longURL: longURL, users: userDatabase, user_id: user_id};
     res.render("urls_show", templateVars);
-  } else {
-    res.status(403).send('This URL can only be viewed by its user. Please log in.');
+  } else{
+    res.status(400).send('This URL can only be viewed by its user.');
   }
 });
 //Update/edit URL
