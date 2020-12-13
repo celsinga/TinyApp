@@ -99,7 +99,7 @@ app.post("/login", (req, res) => {
 //Navbar Logged Out
 app.post("/logout", (req, res) => {
   req.session = null;
-  res.redirect('/register');
+  res.redirect('/login');
 });
 //Create URL
 app.post("/urls", (req, res) => {
